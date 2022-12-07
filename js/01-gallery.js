@@ -12,6 +12,8 @@ const createGallery = galleryItems
   )
   .join("");
 
+let lightboxInstance = undefined;
+
 gallery.insertAdjacentHTML("afterbegin", createGallery);
 
 gallery.addEventListener("click", selectPicture);
@@ -22,17 +24,26 @@ function selectPicture(event) {
     return;
   }
 
-  galleryItems.forEach((picture) => {
-    const modalWindow = basicLightbox.create(`<img src=${picture.original}>`);
-    if (event.target.src === picture.preview) {
-      modalWindow.show();
-    }
-    if (modalWindow.visible() === true) {
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-          modalWindow.close();
-        }
-      });
-    }
-  });
+  const currentSelectedPicture = galleryItems.find(
+    (picture) => event.target.src === picture.preview
+  );
+
+  if (currentSelectedPicture) {
+    const modalWindow = basicLightbox.create(
+      `<img src=${currentSelectedPicture.original}>`
+    );
+    modalWindow.show();
+    lightboxInstance = modalWindow;
+  }
 }
+
+document.addEventListener("keydown", function (event) {
+  if (
+    lightboxInstance &&
+    lightboxInstance.visible() &&
+    event.key === "Escape"
+  ) {
+    lightboxInstance.close();
+    lightboxInstance = undefined;
+  }
+});
