@@ -1,1 +1,1 @@
-JavaScript - View gallery
+JavaScript - Gallery and second gallery using SimpleLightbox
